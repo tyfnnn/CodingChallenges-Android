@@ -1,4 +1,4 @@
-package de.syntax_institut.kotlinvorlage.Woche3
+package de.syntax_institut.kotlinvorlage.woche3
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
