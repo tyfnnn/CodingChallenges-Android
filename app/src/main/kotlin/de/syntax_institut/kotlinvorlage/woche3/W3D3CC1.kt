@@ -3,16 +3,21 @@ package de.syntax_institut.kotlinvorlage.woche3
 import android.R.id.message
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,6 +47,22 @@ fun GreetingComposable(modifier: Modifier = Modifier) {
     ) {
         if (showGreeting) {
             GreetingCard(message = "Hallo! Schön, dass du da bist!")
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    showGreeting = false
+                }
+            ) {
+                Text(text = "Nachricht zurücksetzen")
+            }
+        } else {
+            Text(
+                text = "Einen Moment bitte...",
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
