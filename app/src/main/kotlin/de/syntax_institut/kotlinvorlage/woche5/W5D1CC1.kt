@@ -1,6 +1,8 @@
 package de.syntax_institut.kotlinvorlage.woche5
 
+import android.R.attr.onClick
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -49,11 +53,22 @@ val TODOS = listOf(
 class TaskMasterViewModel : ViewModel() {
     private val _todos = MutableStateFlow(TODOS)
     val todos = _todos.asStateFlow()
+
+    fun toggleTodoDone(index: Int) {
+        val currentTodos = _todos.value.toMutableList()
+        val todoToUpdate = currentTodos[index]
+        currentTodos[index] = todoToUpdate.copy(done = !todoToUpdate.done)
+        _todos.value = currentTodos
+    }
+
+    fun clearTodos() {
+        _todos.value = emptyList()
+    }
 }
 
 @Composable
 fun TaskMasterApp() {
-    val viewModel = TaskMasterViewModel()
+    val viewModel: TaskMasterViewModel = viewModel()
     val todos = viewModel.todos.collectAsState().value
 
     Column(
@@ -64,23 +79,41 @@ fun TaskMasterApp() {
         Text(
             text = "Meine Todo-Liste",
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 8.dp)
         )
+
+        // Clear button
+        Button(
+            onClick = { viewModel.clearTodos() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        ) {
+            Text("Liste leeren")
+        }
+
         LazyColumn {
             items(todos.size) { index ->
-                TodoItem(todo = todos[index])
+                TodoItem(
+                    todo = todos[index],
+                    onToggleDone = { viewModel.toggleTodoDone(index) }
+                )
             }
         }
     }
 }
 
-
 @Composable
-fun TodoItem(todo: Todo) {
+fun TodoItem(
+    todo: Todo,
+    onToggleDone: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable { onToggleDone() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
@@ -119,6 +152,7 @@ fun TodoItem(todo: Todo) {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
